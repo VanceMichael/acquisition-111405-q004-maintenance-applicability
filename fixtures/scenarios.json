@@ -1,0 +1,302 @@
+[
+  {
+    "name": "unknown-config",
+    "routes": [
+      {
+        "path": "/manual",
+        "body": {
+          "issue": "i1",
+          "conditions": "/conditions",
+          "modules": [
+            {
+              "id": "m1",
+              "href": "/module/m1",
+              "condition": {
+                "all": [
+                  {
+                    "eq": [
+                      "model",
+                      "B"
+                    ]
+                  },
+                  {
+                    "eq": [
+                      "option",
+                      true
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/configuration",
+        "body": {
+          "model": "B",
+          "option": null
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/conditions",
+        "body": {
+          "issue": "i1",
+          "definitions": {}
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/module/m1",
+        "body": {
+          "issue": "i1",
+          "resources": [
+            "/image/1"
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/image/1",
+        "body": "drawing",
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "moduleId": "m1",
+        "issue": "i1",
+        "applicability": "unknown"
+      }
+    ],
+    "forbidden": [],
+    "prohibitedRequests": [
+      "/image/1"
+    ]
+  },
+  {
+    "name": "applicable",
+    "routes": [
+      {
+        "path": "/manual",
+        "body": {
+          "issue": "i1",
+          "conditions": "/conditions",
+          "modules": [
+            {
+              "id": "m1",
+              "href": "/module/m1",
+              "condition": {
+                "ref": "c1"
+              }
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/configuration",
+        "body": {
+          "model": "B"
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/conditions",
+        "body": {
+          "issue": "i1",
+          "definitions": {
+            "c1": {
+              "eq": [
+                "model",
+                "B"
+              ]
+            }
+          }
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/module/m1",
+        "body": {
+          "issue": "i1",
+          "resources": [
+            "/image/1"
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/image/1",
+        "body": "drawing",
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "moduleId": "m1",
+        "applicability": "applicable",
+        "resources": [
+          "/image/1"
+        ]
+      }
+    ],
+    "forbidden": []
+  },
+  {
+    "name": "definition-cycle",
+    "routes": [
+      {
+        "path": "/manual",
+        "body": {
+          "issue": "i1",
+          "conditions": "/conditions",
+          "modules": [
+            {
+              "id": "m1",
+              "href": "/module/m1",
+              "condition": {
+                "ref": "c1"
+              }
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/configuration",
+        "body": {
+          "model": "B"
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/conditions",
+        "body": {
+          "issue": "i1",
+          "definitions": {
+            "c1": {
+              "ref": "c2"
+            },
+            "c2": {
+              "ref": "c1"
+            }
+          }
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/module/m1",
+        "body": {
+          "issue": "i1",
+          "resources": [
+            "/image/1"
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/image/1",
+        "body": "drawing",
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [
+      {
+        "moduleId": "m1",
+        "applicability": "unknown"
+      }
+    ],
+    "forbidden": [],
+    "complete": false,
+    "prohibitedRequests": [
+      "/image/1"
+    ]
+  },
+  {
+    "name": "condition-issue-mismatch",
+    "routes": [
+      {
+        "path": "/manual",
+        "body": {
+          "issue": "i1",
+          "conditions": "/conditions",
+          "modules": [
+            {
+              "id": "m1",
+              "href": "/module/m1",
+              "condition": {
+                "ref": "c1"
+              }
+            }
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/configuration",
+        "body": {
+          "model": "B"
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/conditions",
+        "body": {
+          "issue": "i2",
+          "definitions": {
+            "c1": {
+              "eq": [
+                "model",
+                "B"
+              ]
+            }
+          }
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/module/m1",
+        "body": {
+          "issue": "i1",
+          "resources": [
+            "/image/1"
+          ]
+        },
+        "status": 200,
+        "method": "GET"
+      },
+      {
+        "path": "/image/1",
+        "body": "drawing",
+        "status": 200,
+        "method": "GET"
+      }
+    ],
+    "expected": [],
+    "forbidden": [],
+    "prohibitedRequests": [
+      "/image/1"
+    ]
+  }
+]
